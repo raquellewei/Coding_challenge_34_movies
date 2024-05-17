@@ -110,13 +110,14 @@ def add():
 
 
 @app.route("/find", methods=['POST', 'GET'])
-def select(id):
+def select():
+    id = request.args.get('id')
     query_url = f"https://api.themoviedb.org/3/movie/{id}?language=en-US"
     response = requests.get(query_url, headers=headers)
     data = response.json()
     title = data['original_title']
     img_url = data['poster_path']
-    year = data['release_data'].split('-')[0]
+    year = data['release_date'].split('-')[0]
     description = data['overview']
     new_movie = Movie(
         title=title,
@@ -126,7 +127,7 @@ def select(id):
     )
     db.session.add(new_movie)
     db.session.commit()
-    return redirect(url_for('/home'))
+    return redirect(url_for('home'))
 
 
 @app.route("/find", methods=['POST','GET'])
